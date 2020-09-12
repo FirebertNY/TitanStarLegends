@@ -1,0 +1,55 @@
+@import 'variables.scss';
+
+.app {
+  text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  background-image: $backgroundImg;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+
+  @media (max-width: $smallBreakpoint) {
+    justify-content: initial;
+  }
+
+  .calc-container {
+    border: thin solid lightslategray;
+    padding: 20px;
+    width: 80%;
+
+    @media (max-width: $smallBreakpoint) {
+      border: none;
+    }
+
+    .app-header {
+      background-color: $charcoal;
+      padding: 5px;
+      margin-bottom: 50px;
+      font-weight: normal;
+    }
+  
+    .talents-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      @media (max-width: $smallBreakpoint) {
+        flex-direction: column;
+      }
+  
+      .paths-container {
+        flex: 2;
+
+        @media (max-width: $smallBreakpoint) {
+          flex: none;
+          width: 100%;
+        }
+      }
+    }
+  }
+}

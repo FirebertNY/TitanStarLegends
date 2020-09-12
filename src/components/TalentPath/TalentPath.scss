@@ -1,0 +1,31 @@
+@import '../../Variables.scss';
+
+.talent-path {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    color: white;
+    justify-content: space-evenly;
+
+    @media (max-width: $smallBreakpoint) {
+        width: 50%;
+        flex-direction: column;
+        display: inline-flex;
+        align-items: center;
+    }
+}
+
+.talent-path:first-child {
+    margin-bottom: 50px;
+}
+
+.path-name {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+
+    @media (max-width: $smallBreakpoint) {
+        margin-right: 0px;
+        margin-bottom: 20px;
+    }
+}

@@ -1,0 +1,16 @@
+.points-container {
+    border: thin solid lightslategray;
+    background-color: #111111;
+    color: lightslategray;
+    padding: 10px;
+    margin: 0 40px 0 60px;
+    font-size: 1.5em;
+    height: 65px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    div {
+        color: white;
+    }
+}
