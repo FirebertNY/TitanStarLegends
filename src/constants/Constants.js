@@ -22,7 +22,7 @@ export const Talents = [
         selected: false,
         tooltip: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
         bonus: '+1 Party',
-        children: ['CROWN', 'TEST']
+        children: ['CROWN']
     },
     {
         id: 'CROWN',
