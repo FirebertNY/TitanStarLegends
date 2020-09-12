@@ -7,21 +7,23 @@ const TalentsDispatchContext = createContext();
 // Updates the state based on the type of action dispatched
 const TalentsReducer = (state, action) => {
     switch (action.type) {
-        case 'toggleSelected': {
-            const talents = [...state.talents]; // shallow copy the talents from state
-            const talentCopy = {...state.talents.find(t => t.id === action.payload)}; // shallow copy the specific talent from state
-            talentCopy.selected = !talentCopy.selected; // toggle the copy's selected value
-            talents[talents.findIndex(t => t.id === action.payload)] = talentCopy; // replace the talent in the copied array
-            return {talents: talents, pointsSpent: talents.filter(t => t.selected).length}; // update state with the copied array
-        }
-        case 'lock': {
-            const talents = [...state.talents];
-            talents.find(t => t.id === action.payload.talent.id).locked = action.payload.lock;
-            return {talents: talents, pointsSpent: state.pointsSpent};
-        }
-        default: {
+        case 'toggleSelected':
+            return Object.assign({}, state, {
+                talents: state.talents.map(talent => {
+                    if (talent.id === action.payload) {
+                        return Object.assign({}, talent, {
+                            selected: !talent.selected
+                        });
+                    }
+                    return talent;
+                })
+            });
+        case 'updatePointsSpent':
+            return Object.assign({}, state, {
+                pointsSpent: state.pointsSpent + action.payload
+            });
+        default:
             throw new Error(`Action type ${action.type} not handled`);
-        }
     }
 }
 

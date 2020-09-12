@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import './Talent.scss';
 import { useTalentsDispatch, useTalents } from '../../contexts/TalentsContext';
 import { MAX_POINTS } from '../../constants/Constants';
@@ -6,52 +6,45 @@ import { MAX_POINTS } from '../../constants/Constants';
 /*
 A component to represent an individual Talent.
 This component is responsible for sending dispatches to TalentsContext
-to update the selected and locked state of itself in the list of talents there.
+to update the selected state of itself in the list of talents there.
 It also recursively renders additional Talent components if the current Talent has any children.
 */
 const Talent = ({talent}) => {
     const dispatch = useTalentsDispatch();
     const {talents, pointsSpent} = useTalents();
 
+    // Returns true if this talent has children and any of them are selected
+    const anyChildrenSelected = () => {
+        return talent.children && !!talent.children.find(child => child.selected);
+    }
+
+    // Returns true if this talent has a parent and if it is selected
+    const isParentSelected = () => {
+        const parent = talents.find(t => t.children && t.children.indexOf(talent.id) !== -1);
+        return parent === undefined || parent.selected;
+    }
+
+    // Returns true if this talent is selected and either has no children, or has children but none are selected
+    const isLastSelectedInPath = () => {
+        let childUnselected = talent.children && !!talent.children.find(child => !child.selected);
+        return talent.selected && (!talent.children || childUnselected);
+    }
+
+    // Returns true if this talent meets all the criteria for being clickable
+    const isToggleable = () => {
+        return (pointsSpent < MAX_POINTS || isLastSelectedInPath()) && !anyChildrenSelected() && isParentSelected();
+    }
+
     const toggleTalent = () => {
-        // Only toggle the talent if it's not locked, the user has points to spend,
-        // or if the user is de-selecting the talent.
-        if (!talent.locked && (talent.selected || pointsSpent < MAX_POINTS)) {
+        if (isToggleable()) { // Only toggle the talent if it meets the criteria for being toggleable
             dispatch({type: 'toggleSelected', payload: talent.id});
+            dispatch({type: 'updatePointsSpent', payload: talent.selected ? -1 : 1});
         }
     };
 
-    // This useEffect is responsible for each Talent updating its own "locked" state
-    // based on whether any of its children are selected, or if its parent talent is selected.
-    useEffect(() => {
-        // If the talent has children, it should be locked if any children are selected.
-        let anyChildrenSelected = false;
-        if (talent.children) {
-            anyChildrenSelected = talent.children.some(c => {
-                return talents.find(t => t.id === c).selected;
-            });
-        }
-
-        // If the talent is a child of another talent, this talent should be locked if the parent is not selected.
-        let isParentSelected = false;
-        if (talent.root) {
-            isParentSelected = true; // The root talents have no parents, so we will treat them as if they are selected.
-        } else {
-            isParentSelected = talents.some(t => {
-                return t.children && t.children.indexOf(talent.id) !== -1 && t.selected;
-            });
-        }
-
-        // We only want to send the dispatch if the state of the lock attribute is changing.
-        const lock = anyChildrenSelected || !isParentSelected || (!talent.selected && pointsSpent === 6);
-        if (lock !== talent.locked) {
-            dispatch({type: 'lock', payload: {talent: talent, lock: lock}});
-        }
-    }, [talents, dispatch, pointsSpent, talent]);
-
     return (
         <>
-            <span className={`talent ${talent.selected ? 'selected' : ''} ${talent.locked ? 'locked' : ''} ${talent.id}`} 
+            <span className={`talent ${talent.selected ? 'selected' : ''} ${!isToggleable() ? 'locked' : ''} ${talent.id}`} 
                 title={talent.title} 
                 onClick={toggleTalent}>
                 <span className="talent-tooltip">
