@@ -15,7 +15,18 @@ const Talent = ({talent}) => {
 
     // Returns true if this talent has children and any of them are selected
     const anyChildrenSelected = () => {
-        return talent.children && !!talent.children.find(child => child.selected);
+        let childSelected = false;
+        if (talent.children) {
+            for (let i = 0; i < talent.children.length; i++) {
+                const child = talent.children[i];
+                const stateChild = talents.find(t => t.id === child);
+                if (stateChild && stateChild.selected) {
+                    childSelected = true;
+                    break;
+                }
+            }
+        }
+        return talent.children && childSelected;
     }
 
     // Returns true if this talent has a parent and if it is selected
